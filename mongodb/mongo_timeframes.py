@@ -17,21 +17,30 @@ def parse_timeframes(input):
         for line in infile:
             # Look for/parse lines of an initiated connection
             if 'connection accepted' in line:
-                connection_number = line.split()[6].strip('#')
-                ip_port = line.split()[5]
+                connection_number = line.split()[8].strip('#')
+                ip_port = line.split()[7]
                 start_time = line.split()[0]
-                connections[connection_number] = [start_time, ip_port.split(':')[0], ip_port.split(':')[1]]
+                ip_port_splits =  ip_port.split(':')
+
+                if len(ip_port_splits) > 1:
+                    connections[connection_number] = [start_time, ip_port_splits[0], ip_port_splits[1]]
+                else:
+                    print('Cannot read a connection properly')
 
             # Look for/parse lines that end a connection
             if 'end connection' in line:
                 end_time = line.split()[0]
-                connection_number = line.split()[1].strip('conn[]')
-                ip_port = line.split()[4]
+                connection_number = line.split()[3].strip('conn[]')
+                ip_port = line.split()[6]
                 if connection_number in connections:
                     connections[connection_number].append(end_time)
                 else:
                     # Handle lines that do not have an initiated connection
-                    connections[connection_number] = ['N/A', ip_port.split(':')[0], ip_port.split(':')[1], end_time]
+                    ip_port_splits =  ip_port.split(':')
+                    if len(ip_port_splits) > 1:
+                        connections[connection_number] = ['N/A', ip_port_splits[0], ip_port_splits[1], end_time]
+                    else:
+                        print('Cannot read a connection properly')
     return connections
 
 def outputResults(output,output_file):

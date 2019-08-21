@@ -19,10 +19,10 @@ def parse_sessions(input):
         for line in infile:
             try:
                 action = line.split()[2]
-                # Only action item is currently query. Need to expand to other mongo actions
-                if action == 'query':
-                    connection_number = line.split()[1].strip('conn[]')
-                    collection = line.split()[3]
+                # Only action item is currently COMMAND. Need to expand to other mongo actions
+                if action == 'COMMAND':
+                    connection_number = line.split()[3].strip('conn[]')
+                    collection = ' '.join(str(x) for x in line.split()[4:])
                     # Test to see if connection ID already has an entry. If so, don't overwrite. If not, create.
                     try:
                         if collection in collections[connection_number]:
